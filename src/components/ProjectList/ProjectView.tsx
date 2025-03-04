@@ -78,40 +78,18 @@ const FinishButton = styled.button`
   cursor: pointer;
 `;
 
-export default function ProjectView() {
-  const datas = [
-    {
-      id: 1,
-      name: "1인 개발 프로젝트1",
-      content: "1인 개발로 프로젝트 진행 중입니다.",
-      date: "2025-03-09T15:30:00",
-    },
-    {
-      id: 2,
-      name: "1인 개발 프로젝트2",
-      content: "1인 개발로 프로젝트 진행 중입니다.",
-      date: "2025-03-09T15:30:00",
-    },
-    {
-      id: 3,
-      name: "1인 개발 프로젝트3",
-      content: "1인 개발로 프로젝트 진행 중입니다.",
-      date: "2025-03-09T15:30:00",
-    },
-    {
-      id: 4,
-      name: "1인 개발 프로젝트4",
-      content: "1인 개발로 프로젝트 진행 중입니다.",
-      date: "2025-03-09T15:30:00",
-    },
-    {
-      id: 5,
-      name: "1인 개발 프로젝트5",
-      content: "1인 개발로 프로젝트 진행 중입니다.",
-      date: "2025-03-09T15:30:00",
-    },
-  ];
+interface ProjectViewProps {
+  id: number;
+  name: string;
+  content: string;
+  date: string;
+}
 
+interface ProjectViewComponentProps {
+  datas: ProjectViewProps[];
+}
+
+export default function ProjectView({ datas }: ProjectViewComponentProps) {
   const formattedDate = (date: string) => {
     const [year, month, day] = date.split("-");
     return `${year}년 ${month}월 ${day.slice(0, 2)}일`;
