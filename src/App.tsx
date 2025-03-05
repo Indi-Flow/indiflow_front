@@ -4,6 +4,7 @@ import "./App.css";
 import styled from "styled-components";
 import Login from "pages/Login";
 import ProjectList from "pages/ProjectList";
+import Home from "pages/Home";
 
 const Container = styled.div`
   display: flex;
@@ -19,6 +20,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/projects" element={<ProjectList />} />
+          <Route path="/home/:id" element={<Home />} />
         </Routes>
       </Router>
     </Container>

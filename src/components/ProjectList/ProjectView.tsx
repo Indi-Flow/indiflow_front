@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import Calendar from "assets/icons/icon_calendar.svg";
 import Content from "assets/icons/icon_content.svg";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   width: 1033px;
@@ -90,6 +91,8 @@ interface ProjectViewComponentProps {
 }
 
 export default function ProjectView({ datas }: ProjectViewComponentProps) {
+  const navigate = useNavigate();
+
   const formattedDate = (date: string) => {
     const [year, month, day] = date.split("-");
     return `${year}년 ${month}월 ${day.slice(0, 2)}일`;
@@ -108,7 +111,9 @@ export default function ProjectView({ datas }: ProjectViewComponentProps) {
             <Text>{data.content}</Text>
           </Wrap>
           <Wrap>
-            <InButton>들어가기</InButton>
+            <InButton onClick={() => navigate(`/Home/${data.id}`)}>
+              들어가기
+            </InButton>
             <FinishButton>완료하기</FinishButton>
           </Wrap>
         </ProjectBox>
