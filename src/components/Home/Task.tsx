@@ -1,6 +1,7 @@
-import { useEffect } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import Memo from "./Memo";
+import Close from "assets/icons/icon_close.svg";
 
 interface TaskProps {
   id: string | undefined;
@@ -143,7 +144,70 @@ const InButton = styled.button`
   cursor: pointer;
 `;
 
+const Modal = styled.div`
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  left: 0;
+  z-index: 100;
+`;
+
+const BackGround = styled.div`
+  width: 651px;
+  height: 574px;
+  background-color: #fff;
+  padding-left: 64px;
+  padding-top: 39px;
+  border: none;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+`;
+
+const Label = styled.label`
+  color: #000;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  margin-top: 41px;
+`;
+
+const Input = styled.input`
+  width: 323px;
+  height: 56px;
+  padding-left: 16px;
+  padding-right: 16px;
+  margin-top: 11px;
+  border: 1px solid #000;
+  border-radius: 5px;
+  background-color: #fff;
+`;
+
+const AddButton = styled.button`
+  width: 186px;
+  height: 59px;
+  margin-top: 41px;
+  margin-left: 400px;
+  border-radius: 10px;
+  background: #79bff4;
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: normal;
+  cursor: pointer;
+`;
+
 export default function Task({ id }: TaskProps) {
+  const [isTask, setIsTask] = useState<boolean>(false);
   const datas: TaskData[] = [
     {
       id: 1,
@@ -188,7 +252,7 @@ export default function Task({ id }: TaskProps) {
   return (
     <Container>
       <Wrap>
-        <Button>
+        <Button onClick={() => setIsTask(true)}>
           <Span>+</Span> 새로운 Task 생성
         </Button>
       </Wrap>
@@ -209,6 +273,30 @@ export default function Task({ id }: TaskProps) {
         </TaskWrap>
         <Memo id={id} />
       </TaskMemoWrap>
+      {isTask && (
+        <Modal>
+          <BackGround>
+            <img
+              src={Close}
+              alt="close"
+              style={{
+                position: "absolute",
+                right: "50px",
+                top: "50px",
+                cursor: "pointer",
+              }}
+              onClick={() => setIsTask(false)}
+            />
+            <Label>Task 이름</Label>
+            <Input type="text" placeholder="TASK 이름을 입력해주세요" />
+            <Label>마감일 설정</Label>
+            <Input type="date" />
+            <Label>내용</Label>
+            <Input type="text" placeholder="내용을 입력해주세요." />
+            <AddButton onClick={() => setIsTask(false)}>등록하기</AddButton>
+          </BackGround>
+        </Modal>
+      )}
     </Container>
   );
 }
