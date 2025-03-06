@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import styled from "styled-components";
+import Memo from "./Memo";
 
 interface TaskProps {
   id: string | undefined;
@@ -54,13 +55,14 @@ const Span = styled.span`
 const TaskMemoWrap = styled.div`
   display: flex;
   width: 100%;
+  justify-content: space-between;
+  margin-top: 20px;
 `;
 
 const TaskWrap = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 49px;
-  margin-top: 20px;
 `;
 
 const TaskBox = styled.div`
@@ -205,6 +207,7 @@ export default function Task({ id }: TaskProps) {
             </TaskBox>
           ))}
         </TaskWrap>
+        <Memo id={id} />
       </TaskMemoWrap>
     </Container>
   );
