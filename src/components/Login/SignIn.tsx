@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import Logo from "../../assets/icons/logo.svg";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useState } from "react";
 
 const Container = styled.div`
   display: flex;
@@ -77,19 +79,40 @@ interface SignInProps {
 
 export default function SignIn({ setIsSignIn }: SignInProps) {
   const navigate = useNavigate();
+  const [id, setId] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSignIn = async () => {
+    try {
+      const response = await axios.post("http://127.0.0.1:8080/user/sign_in", {
+        username: id,
+        password: password,
+      });
+      navigate("/projects");
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
     <Container>
       <img src={Logo} alt="Logo" height={70} width={70} />
       <Label htmlFor="id">아이디</Label>
-      <Input type="text" id="id" placeholder="아이디를 입력해주세요" />
+      <Input
+        type="text"
+        id="id"
+        placeholder="아이디를 입력해주세요"
+        onChange={(e) => setId(e.target.value)}
+      />
       <Label htmlFor="password">비밀번호</Label>
       <Input
         type="password"
         id="password"
         placeholder="비밀번호를 입력해주세요."
+        onChange={(e) => setPassword(e.target.value)}
       />
       <ButtonWrap>
-        <InButton onClick={() => navigate("/projects")}>로그인하기</InButton>
+        <InButton onClick={() => handleSignIn()}>로그인하기</InButton>
         <OnButton onClick={() => setIsSignIn(false)}>회원가입하기</OnButton>
       </ButtonWrap>
     </Container>
