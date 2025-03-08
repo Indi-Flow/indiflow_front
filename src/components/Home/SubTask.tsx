@@ -1,6 +1,6 @@
-import { useState } from "react";
 import styled from "styled-components";
 import Memo from "./Memo";
+import { useState } from "react";
 import Close from "assets/icons/icon_close.svg";
 
 const Container = styled.div`
@@ -42,20 +42,20 @@ const Span = styled.span`
   font-size: 24px;
 `;
 
-const TaskMemoWrap = styled.div`
+const SubTaskMemoWrap = styled.div`
   display: flex;
   width: 100%;
   justify-content: space-between;
   margin-top: 20px;
 `;
 
-const TaskWrap = styled.div`
+const SubTaskWrap = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 49px;
 `;
 
-const TaskBox = styled.div`
+const SubTaskBox = styled.div`
   display: flex;
   flex-direction: column;
   width: 360px;
@@ -67,7 +67,7 @@ const TaskBox = styled.div`
   padding-right: 22px;
 `;
 
-const TaskTitle = styled.p`
+const SubTaskTitle = styled.p`
   color: #000;
   font-size: 20px;
   font-style: normal;
@@ -92,7 +92,7 @@ const SpanTag = styled.span`
   line-height: normal;
 `;
 
-const TaskDate = styled.p`
+const SubTaskDate = styled.p`
   color: #b5b5b5;
   font-size: 15px;
   font-style: normal;
@@ -107,35 +107,10 @@ const Content = styled.p`
   font-weight: 400;
   line-height: normal;
   height: 48px;
-  display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-`;
-
-const ButtonBox = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-`;
-
-const InButton = styled.button`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 360px;
-  height: 43px;
-  border-radius: 5px;
-  background-color: #79bff4;
-  border: none;
-  color: #fff;
-  font-size: 18px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
-  cursor: pointer;
 `;
 
 const Modal = styled.div`
@@ -200,21 +175,21 @@ const AddButton = styled.button`
   cursor: pointer;
 `;
 
-interface TaskProps {
+interface SubSubTaskProps {
   id: string | undefined;
-  setInSubTask: (inSubTask: number) => void;
+  taskId: number;
 }
 
-interface TaskData {
+interface SubSubTaskData {
   id: number;
   title: string;
   content: string;
   date: string;
 }
 
-export default function Task({ id, setInSubTask }: TaskProps) {
-  const [isTask, setIsTask] = useState<boolean>(false);
-  const datas: TaskData[] = [
+export default function SubSubTask({ id, taskId }: SubSubTaskProps) {
+  const [isSubTaskModal, setIsSubTaskModal] = useState<boolean>(false);
+  const datas: SubSubTaskData[] = [
     {
       id: 1,
       title: "기획 및 디자인 작업 들어가기",
@@ -258,30 +233,25 @@ export default function Task({ id, setInSubTask }: TaskProps) {
   return (
     <Container>
       <Wrap>
-        <Button onClick={() => setIsTask(true)}>
-          <Span>+</Span> 새로운 Task 생성
+        <Button onClick={() => setIsSubTaskModal(true)}>
+          <Span>+</Span> 새로운 SubTask 생성
         </Button>
       </Wrap>
-      <TaskMemoWrap>
-        <TaskWrap>
+      <SubTaskMemoWrap>
+        <SubTaskWrap>
           {datas.map((data) => (
-            <TaskBox key={data.id}>
-              <TaskTitle>
-                {data.title} <SpanTag>task</SpanTag>
-              </TaskTitle>
-              <TaskDate>{formatDate(data.date)}</TaskDate>
+            <SubTaskBox key={data.id}>
+              <SubTaskTitle>
+                {data.title} <SpanTag>SubTask</SpanTag>
+              </SubTaskTitle>
+              <SubTaskDate>{formatDate(data.date)}</SubTaskDate>
               <Content>{data.content}</Content>
-              <ButtonBox>
-                <InButton onClick={() => setInSubTask(data.id)}>
-                  SubTask 보기
-                </InButton>
-              </ButtonBox>
-            </TaskBox>
+            </SubTaskBox>
           ))}
-        </TaskWrap>
+        </SubTaskWrap>
         <Memo id={id} />
-      </TaskMemoWrap>
-      {isTask && (
+      </SubTaskMemoWrap>
+      {isSubTaskModal && (
         <Modal>
           <BackGround>
             <img
@@ -293,15 +263,17 @@ export default function Task({ id, setInSubTask }: TaskProps) {
                 top: "50px",
                 cursor: "pointer",
               }}
-              onClick={() => setIsTask(false)}
+              onClick={() => setIsSubTaskModal(false)}
             />
-            <Label>Task 이름</Label>
-            <Input type="text" placeholder="TASK 이름을 입력해주세요" />
+            <Label>SubTask 이름</Label>
+            <Input type="text" placeholder="SubTask 이름을 입력해주세요" />
             <Label>마감일 설정</Label>
             <Input type="date" />
             <Label>내용</Label>
             <Input type="text" placeholder="내용을 입력해주세요." />
-            <AddButton onClick={() => setIsTask(false)}>등록하기</AddButton>
+            <AddButton onClick={() => setIsSubTaskModal(false)}>
+              등록하기
+            </AddButton>
           </BackGround>
         </Modal>
       )}

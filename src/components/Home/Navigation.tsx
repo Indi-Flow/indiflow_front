@@ -6,6 +6,7 @@ import Graph from "assets/icons/icon_graph.svg";
 import GraphCheck from "assets/icons/icon_graph_check.svg";
 import Pomodoro from "assets/icons/icon_pomodoro.svg";
 import PomodoroCheck from "assets/icons/icon_pomodoro_check.svg";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
@@ -25,22 +26,42 @@ const Wrap = styled.div`
   gap: 83px;
 `;
 
+const Image = styled.img`
+  cursor: pointer;
+`;
+
 interface NavigationProps {
   page: number;
   setPage: (page: number) => void;
+  setTaskId: (taskId: number) => void;
 }
 
-export default function Navigation({ page, setPage }: NavigationProps) {
+export default function Navigation({
+  page,
+  setPage,
+  setTaskId,
+}: NavigationProps) {
+  const navigate = useNavigate();
+
   return (
     <Container>
-      <img src={Logo} alt="Logo" width={70} height={70} />
+      <Image
+        src={Logo}
+        alt="Logo"
+        width={70}
+        height={70}
+        onClick={() => navigate("/projects")}
+      />
       <Wrap>
         <img
           src={page === 1 ? HomeCheck : Home}
           alt="Home"
           width={30}
           height={30}
-          onClick={() => setPage(1)}
+          onClick={() => {
+            setPage(1);
+            setTaskId(-1);
+          }}
           style={{ cursor: "pointer" }}
         />
         <img
