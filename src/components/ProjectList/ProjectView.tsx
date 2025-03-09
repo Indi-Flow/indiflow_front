@@ -2,10 +2,14 @@ import styled from "styled-components";
 import Calendar from "assets/icons/icon_calendar.svg";
 import Content from "assets/icons/icon_content.svg";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { use } from "react";
 
 const Container = styled.div`
   width: 1033px;
   margin-top: 44px;
+  height: auto;
+  background-color: #e6edf1;
   align-items: center;
   column-gap: 105px;
   row-gap: 57px;
@@ -88,15 +92,35 @@ interface ProjectViewProps {
 
 interface ProjectViewComponentProps {
   datas: ProjectViewProps[];
+  username: string | undefined;
+  setIsDelete: (isDelete: boolean) => void;
 }
 
-export default function ProjectView({ datas }: ProjectViewComponentProps) {
+export default function ProjectView({
+  datas,
+  username,
+  setIsDelete,
+}: ProjectViewComponentProps) {
   const navigate = useNavigate();
 
   const formattedDate = (date: string) => {
     const [year, month, day] = date.split("-");
     return `${year}년 ${month}월 ${day.slice(0, 2)}일`;
   };
+
+  const handleDeleteProject = async (id: number) => {
+    try {
+      setIsDelete(true);
+      const response = await axios.delete(
+        `http://localhost:8080/project/${username}/${id}/finish_project`
+      );
+      alert(response.data);
+      setIsDelete(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <Container>
       {datas.map((data) => (
@@ -111,10 +135,16 @@ export default function ProjectView({ datas }: ProjectViewComponentProps) {
             <Text>{data.content}</Text>
           </Wrap>
           <Wrap>
-            <InButton onClick={() => navigate(`/Home/${data.id}`)}>
+            <InButton
+              onClick={() =>
+                navigate(`/Home/${data.id}`, { state: { username } })
+              }
+            >
               들어가기
             </InButton>
-            <FinishButton>완료하기</FinishButton>
+            <FinishButton onClick={() => handleDeleteProject(data.id)}>
+              완료하기
+            </FinishButton>
           </Wrap>
         </ProjectBox>
       ))}

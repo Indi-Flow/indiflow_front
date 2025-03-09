@@ -1,6 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import Close from "assets/icons/icon_close.svg";
+import axios from "axios";
 
 const Container = styled.div`
   width: 1033px;
@@ -104,8 +105,42 @@ const AddButton = styled.button`
   cursor: pointer;
 `;
 
-export default function ProjectHeader() {
+interface ProjectViewProps {
+  id: number;
+  name: string;
+  content: string;
+  date: string;
+}
+
+interface ProjectHeaderComponentProps {
+  setProjects: React.Dispatch<React.SetStateAction<ProjectViewProps[]>>;
+  username: string | undefined;
+}
+
+export default function ProjectHeader({
+  setProjects,
+  username,
+}: ProjectHeaderComponentProps) {
   const [projectModal, setProjectModal] = useState<boolean>(false);
+  const [name, setName] = useState<string>("");
+  const [content, setContent] = useState<string>("");
+  const [date, setDate] = useState<string>("");
+
+  const handleFetchProjects = async () => {
+    try {
+      const formattedDate = new Date(date).toISOString();
+      console.log(name, content, formattedDate);
+      const response = await axios.post(
+        `http://127.0.0.1:8080/project/${username}`,
+        { name: name, content: content, date: formattedDate }
+      );
+      console.log(response.data);
+      setProjects((props) => [...props, response.data]);
+      setProjectModal(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <Container>
@@ -128,12 +163,20 @@ export default function ProjectHeader() {
               onClick={() => setProjectModal(false)}
             />
             <Label>프로젝트 제목</Label>
-            <Input type="text" placeholder="제목을 입력해주세요." />
+            <Input
+              type="text"
+              placeholder="제목을 입력해주세요."
+              onChange={(e) => setName(e.target.value)}
+            />
             <Label>마감일 설정</Label>
-            <Input type="date" />
+            <Input type="date" onChange={(e) => setDate(e.target.value)} />
             <Label>내용</Label>
-            <Input type="text" placeholder="내용을 입력해주세요." />
-            <AddButton onClick={() => setProjectModal(false)}>
+            <Input
+              type="text"
+              placeholder="내용을 입력해주세요."
+              onChange={(e) => setContent(e.target.value)}
+            />
+            <AddButton onClick={() => handleFetchProjects()}>
               등록하기
             </AddButton>
           </BackGround>

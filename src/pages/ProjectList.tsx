@@ -2,54 +2,55 @@ import ProjectHeader from "components/ProjectList/ProjectHeader";
 import ProjectView from "components/ProjectList/ProjectView";
 import styled from "styled-components";
 import axios from "axios";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   background-color: #e6edf1;
-  height: auto;
+  height: 100vh;
   width: 100vw;
 `;
 
+interface ProjectViewProps {
+  id: number;
+  name: string;
+  content: string;
+  date: string;
+}
+
 export default function ProjectList() {
-  const datas = [
-    {
-      id: 1,
-      name: "1인 개발 프로젝트1",
-      content: "1인 개발로 프로젝트 진행 중입니다.",
-      date: "2025-03-09T15:30:00",
-    },
-    {
-      id: 2,
-      name: "1인 개발 프로젝트2",
-      content: "1인 개발로 프로젝트 진행 중입니다.",
-      date: "2025-03-09T15:30:00",
-    },
-    {
-      id: 3,
-      name: "1인 개발 프로젝트3",
-      content: "1인 개발로 프로젝트 진행 중입니다.",
-      date: "2025-03-09T15:30:00",
-    },
-    {
-      id: 4,
-      name: "1인 개발 프로젝트4",
-      content: "1인 개발로 프로젝트 진행 중입니다.",
-      date: "2025-03-09T15:30:00",
-    },
-    {
-      id: 5,
-      name: "1인 개발 프로젝트5",
-      content: "1인 개발로 프로젝트 진행 중입니다.",
-      date: "2025-03-09T15:30:00",
-    },
-  ];
+  const [projects, setProjects] = useState<ProjectViewProps[]>([]);
+  const [isDelete, setIsDelete] = useState<boolean>(false);
+  const { username } = useParams<{ username: string }>();
+
+  useEffect(() => {
+    handleGetProjects();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [username, setProjects, isDelete]);
+
+  const handleGetProjects = async () => {
+    try {
+      const response = await axios.get(
+        `http://127.0.0.1:8080/projects/${username}`
+      );
+      console.log(response.data);
+      setProjects(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <Container>
-      <ProjectHeader />
-      <ProjectView datas={datas} />
+      <ProjectHeader setProjects={setProjects} username={username} />
+      <ProjectView
+        datas={projects}
+        username={username}
+        setIsDelete={setIsDelete}
+      />
     </Container>
   );
 }

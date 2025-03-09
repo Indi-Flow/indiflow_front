@@ -203,43 +203,20 @@ const AddButton = styled.button`
 interface TaskProps {
   id: string | undefined;
   setInSubTask: (inSubTask: number) => void;
+  username: string | undefined;
 }
 
-interface TaskData {
+interface Task {
   id: number;
   title: string;
   content: string;
   date: string;
 }
 
-export default function Task({ id, setInSubTask }: TaskProps) {
+export default function Task({ id, setInSubTask, username }: TaskProps) {
   const [isTask, setIsTask] = useState<boolean>(false);
-  const datas: TaskData[] = [
-    {
-      id: 1,
-      title: "기획 및 디자인 작업 들어가기",
-      content: "IA, Wireframe, Design 작업 하기",
-      date: "2025-03-09T15:30:00",
-    },
-    {
-      id: 2,
-      title: "프론트 1차 UI 작업 들어가기",
-      content: "API 연결하기 전 프론트 정적 페이지 완성",
-      date: "2025-05-09T15:30:00",
-    },
-    {
-      id: 3,
-      title: "백엔드 API 설계",
-      content: "DB 설계 및 API 문서 작성",
-      date: "2025-03-03T15:30:00",
-    },
-    {
-      id: 4,
-      title: "API 연동",
-      content: "사용자한테 입력을 받아서 API 연동을 통해 서버에 저장시키기 ",
-      date: "2025-03-09T15:30:00",
-    },
-  ];
+  const [tasks, setTasks] = useState<Task[]>([]);
+
   const formatDate = (date: string) => {
     const now = new Date();
     const targetDate = new Date(date);
@@ -264,22 +241,22 @@ export default function Task({ id, setInSubTask }: TaskProps) {
       </Wrap>
       <TaskMemoWrap>
         <TaskWrap>
-          {datas.map((data) => (
-            <TaskBox key={data.id}>
+          {tasks.map((task) => (
+            <TaskBox key={task.id}>
               <TaskTitle>
-                {data.title} <SpanTag>task</SpanTag>
+                {task.title} <SpanTag>task</SpanTag>
               </TaskTitle>
-              <TaskDate>{formatDate(data.date)}</TaskDate>
-              <Content>{data.content}</Content>
+              <TaskDate>{formatDate(task.date)}</TaskDate>
+              <Content>{task.content}</Content>
               <ButtonBox>
-                <InButton onClick={() => setInSubTask(data.id)}>
+                <InButton onClick={() => setInSubTask(task.id)}>
                   SubTask 보기
                 </InButton>
               </ButtonBox>
             </TaskBox>
           ))}
         </TaskWrap>
-        <Memo id={id} />
+        <Memo id={id} username={username} />
       </TaskMemoWrap>
       {isTask && (
         <Modal>

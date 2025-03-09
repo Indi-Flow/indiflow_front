@@ -88,7 +88,7 @@ export default function SignIn({ setIsSignIn }: SignInProps) {
         username: id,
         password: password,
       });
-      navigate("/projects");
+      navigate(`/projects/${response.data}`);
       console.log(response);
     } catch (error) {
       console.error(error);
