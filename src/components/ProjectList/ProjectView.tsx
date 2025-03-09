@@ -57,7 +57,7 @@ const InButton = styled.button`
   height: 52px;
   border: none;
   border-radius: 10px;
-  background-color: #d1ebff;
+  background-color: #79bff4;
   color: #fff;
   font-size: 18px;
   font-style: normal;
@@ -116,6 +116,7 @@ export default function ProjectView({
       alert(response.data);
       setIsDelete(false);
     } catch (error) {
+      alert("프로젝트 삭제에 실패했습니다 (Task들을 모두 완료해주세요)");
       console.error(error);
     }
   };

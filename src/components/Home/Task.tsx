@@ -120,16 +120,34 @@ const ButtonBox = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
+  gap: 14px;
 `;
 
 const InButton = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 360px;
+  width: 200px;
   height: 43px;
   border-radius: 5px;
   background-color: #79bff4;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  cursor: pointer;
+`;
+
+const OnButton = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 200px;
+  height: 43px;
+  border-radius: 5px;
+  background-color: #b5b5b5;
   border: none;
   color: #fff;
   font-size: 18px;
@@ -209,13 +227,14 @@ interface TaskProps {
 
 interface TaskData {
   id: number;
-  title: string;
+  name: string;
   content: string;
   date: string;
 }
 
 export default function Task({ id, setInSubTask, username }: TaskProps) {
   const [isTask, setIsTask] = useState<boolean>(false);
+  const [isDelete, setIsDelete] = useState<boolean>(false);
   const [tasks, setTasks] = useState<TaskData[]>([]);
   const [name, setName] = useState<string>("");
   const [content, setContent] = useState<string>("");
@@ -224,7 +243,7 @@ export default function Task({ id, setInSubTask, username }: TaskProps) {
   useEffect(() => {
     handleGetTasks();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isDelete]);
 
   const handleGetTasks = async () => {
     try {
@@ -251,12 +270,25 @@ export default function Task({ id, setInSubTask, username }: TaskProps) {
       );
       const data = {
         id: response.data,
-        title: name,
+        name: name,
         content: content,
         date: formDate,
       };
       setTasks((props) => [...props, data]);
       setIsTask(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleDeleteTask = async (taskId: number) => {
+    try {
+      setIsDelete(true);
+      const response = await axios.delete(
+        `http://localhost:8080/task/${username}/${id}/${taskId}/finish_task`
+      );
+      alert(response.data);
+      setIsDelete(false);
     } catch (error) {
       console.error(error);
     }
@@ -289,7 +321,7 @@ export default function Task({ id, setInSubTask, username }: TaskProps) {
           {tasks.map((task) => (
             <TaskBox key={task.id}>
               <TaskTitle>
-                {task.title} <SpanTag>task</SpanTag>
+                {task.name} <SpanTag>task</SpanTag>
               </TaskTitle>
               <TaskDate>{formatDate(task.date)}</TaskDate>
               <Content>{task.content}</Content>
@@ -297,6 +329,9 @@ export default function Task({ id, setInSubTask, username }: TaskProps) {
                 <InButton onClick={() => setInSubTask(task.id)}>
                   SubTask 보기
                 </InButton>
+                <OnButton onClick={() => handleDeleteTask(task.id)}>
+                  완료하기
+                </OnButton>
               </ButtonBox>
             </TaskBox>
           ))}
