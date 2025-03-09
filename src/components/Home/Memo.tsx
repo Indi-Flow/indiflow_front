@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import Arrow from "assets/icons/icon_arrow.svg";
-import { memo, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 const Container = styled.div`
@@ -80,14 +80,14 @@ interface MemoProps {
   username: string | undefined;
 }
 
-interface Memo {
+interface MemoData {
   id: number;
   content: string;
   created_at: string;
 }
 
 export default function Memo({ id, username }: MemoProps) {
-  const [memos, setMemos] = useState<Memo[]>([]);
+  const [memos, setMemos] = useState<MemoData[]>([]);
   const [content, setContent] = useState<string>("");
 
   useEffect(() => {

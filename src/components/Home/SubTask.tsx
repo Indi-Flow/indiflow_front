@@ -1,7 +1,8 @@
 import styled from "styled-components";
 import Memo from "./Memo";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Close from "assets/icons/icon_close.svg";
+import axios from "axios";
 
 const Container = styled.div`
   display: flex;
@@ -126,6 +127,30 @@ const Modal = styled.div`
   z-index: 100;
 `;
 
+const ButtonBox = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+`;
+
+const InButton = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 360px;
+  height: 43px;
+  border-radius: 5px;
+  background-color: #79bff4;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  cursor: pointer;
+`;
+
 const BackGround = styled.div`
   width: 651px;
   height: 574px;
@@ -175,47 +200,80 @@ const AddButton = styled.button`
   cursor: pointer;
 `;
 
-interface SubSubTaskProps {
+interface SubTaskProps {
   id: string | undefined;
   taskId: number;
   username: string | undefined;
 }
 
-interface SubSubTaskData {
+interface SubTaskData {
   id: number;
-  title: string;
+  name: string;
   content: string;
   date: string;
 }
 
-export default function SubSubTask({ id, taskId, username }: SubSubTaskProps) {
+export default function SubSubTask({ id, taskId, username }: SubTaskProps) {
   const [isSubTaskModal, setIsSubTaskModal] = useState<boolean>(false);
-  const datas: SubSubTaskData[] = [
-    {
-      id: 1,
-      title: "기획 및 디자인 작업 들어가기",
-      content: "IA, Wireframe, Design 작업 하기",
-      date: "2025-03-09T15:30:00",
-    },
-    {
-      id: 2,
-      title: "프론트 1차 UI 작업 들어가기",
-      content: "API 연결하기 전 프론트 정적 페이지 완성",
-      date: "2025-05-09T15:30:00",
-    },
-    {
-      id: 3,
-      title: "백엔드 API 설계",
-      content: "DB 설계 및 API 문서 작성",
-      date: "2025-03-03T15:30:00",
-    },
-    {
-      id: 4,
-      title: "API 연동",
-      content: "사용자한테 입력을 받아서 API 연동을 통해 서버에 저장시키기 ",
-      date: "2025-03-09T15:30:00",
-    },
-  ];
+  const [subTasks, setSubTasks] = useState<SubTaskData[]>([]);
+  const [isDelete, setIsDelete] = useState<boolean>(false);
+  const [name, setName] = useState<string>("");
+  const [content, setContent] = useState<string>("");
+  const [date, setDate] = useState<string>("");
+
+  useEffect(() => {
+    handleGetSubTasks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDelete]);
+
+  const handleGetSubTasks = async () => {
+    try {
+      const response = await axios.get(
+        `http://127.0.0.1:8080/task/${username}/${id}/${taskId}/subTask_list`
+      );
+      setSubTasks(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handlePostSubTasks = async (date: string) => {
+    try {
+      const formDate = new Date(date).toISOString();
+      const response = await axios.post(
+        `http://127.0.0.1:8080/subTask/${username}/${id}/${taskId}/subTask`,
+        {
+          name: name,
+          content: content,
+          date: formDate,
+        }
+      );
+      const data = {
+        id: response.data,
+        name: name,
+        content: content,
+        date: formDate,
+      };
+      setSubTasks((props) => [...props, data]);
+      setIsSubTaskModal(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleDeleteSubTask = async (subTaskId: number) => {
+    try {
+      setIsDelete(true);
+      const response = await axios.delete(
+        `http://localhost:8080/subTask/${username}/${id}/${taskId}/${subTaskId}/finish_subtask`
+      );
+      alert(response.data);
+      setIsDelete(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const formatDate = (date: string) => {
     const now = new Date();
     const targetDate = new Date(date);
@@ -240,13 +298,18 @@ export default function SubSubTask({ id, taskId, username }: SubSubTaskProps) {
       </Wrap>
       <SubTaskMemoWrap>
         <SubTaskWrap>
-          {datas.map((data) => (
-            <SubTaskBox key={data.id}>
+          {subTasks.map((subTask) => (
+            <SubTaskBox key={subTask.id}>
               <SubTaskTitle>
-                {data.title} <SpanTag>SubTask</SpanTag>
+                {subTask.name} <SpanTag>SubTask</SpanTag>
               </SubTaskTitle>
-              <SubTaskDate>{formatDate(data.date)}</SubTaskDate>
-              <Content>{data.content}</Content>
+              <SubTaskDate>{formatDate(subTask.date)}</SubTaskDate>
+              <Content>{subTask.content}</Content>
+              <ButtonBox>
+                <InButton onClick={() => handleDeleteSubTask(subTask.id)}>
+                  SubTask 완료하기
+                </InButton>
+              </ButtonBox>
             </SubTaskBox>
           ))}
         </SubTaskWrap>
@@ -267,12 +330,20 @@ export default function SubSubTask({ id, taskId, username }: SubSubTaskProps) {
               onClick={() => setIsSubTaskModal(false)}
             />
             <Label>SubTask 이름</Label>
-            <Input type="text" placeholder="SubTask 이름을 입력해주세요" />
+            <Input
+              type="text"
+              placeholder="SubTask 이름을 입력해주세요"
+              onChange={(e) => setName(e.target.value)}
+            />
             <Label>마감일 설정</Label>
-            <Input type="date" />
+            <Input type="date" onChange={(e) => setDate(e.target.value)} />
             <Label>내용</Label>
-            <Input type="text" placeholder="내용을 입력해주세요." />
-            <AddButton onClick={() => setIsSubTaskModal(false)}>
+            <Input
+              type="text"
+              placeholder="내용을 입력해주세요."
+              onChange={(e) => setContent(e.target.value)}
+            />
+            <AddButton onClick={() => handlePostSubTasks(date)}>
               등록하기
             </AddButton>
           </BackGround>

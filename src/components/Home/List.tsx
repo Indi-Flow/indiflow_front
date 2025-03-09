@@ -1,3 +1,5 @@
+import axios from "axios";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 
 const Container = styled.div`
@@ -76,50 +78,38 @@ interface ListProps {
   username: string | undefined;
 }
 
-export default function List({ id }: ListProps) {
-  const dummyDatas = [
-    {
-      id: 1,
-      name: "태스크명 1",
-      subTasks: [
-        {
-          id: 1,
-          name: "서브태스크1",
-          content: "this is content",
-          date: "2025-02-02T00:00:00",
-        },
-        {
-          id: 2,
-          name: "서브태스크2",
-          content: "this is content",
-          date: "2025-02-02T00:00:00",
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: "태스크명 2",
-      subTasks: [],
-    },
-    {
-      id: 3,
-      name: "태스크명 3",
-      subTasks: [
-        {
-          id: 1,
-          name: "서브태스크1",
-          content: "this is content",
-          date: "2025-02-02T00:00:00",
-        },
-        {
-          id: 2,
-          name: "서브태스크2",
-          content: "this is content",
-          date: "2025-02-02T00:00:00",
-        },
-      ],
-    },
-  ];
+interface AllProps {
+  id: number;
+  name: string;
+  subTasks: SubTaskProps[];
+}
+
+interface SubTaskProps {
+  id: number;
+  name: string;
+  content: string;
+  date: string;
+}
+
+export default function List({ id, username }: ListProps) {
+  const [allTasks, setAllTasks] = useState<AllProps[]>([]);
+
+  useEffect(() => {
+    handleGetAll();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleGetAll = async () => {
+    try {
+      const response = await axios.get(
+        `http://127.0.0.1:8080/project/${username}/${id}/tasks_with_subtasks`
+      );
+      setAllTasks(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -136,13 +126,13 @@ export default function List({ id }: ListProps) {
   return (
     <Container>
       <Wrap>
-        {dummyDatas.map((data) => (
-          <TaskWrap key={data.id}>
+        {allTasks.map((task) => (
+          <TaskWrap key={task.id}>
             <TitleBox>
-              <TaskTitle>{data.name}</TaskTitle>
+              <TaskTitle>{task.name}</TaskTitle>
             </TitleBox>
             <ul>
-              {data.subTasks.map((subTask) => (
+              {task.subTasks.map((subTask) => (
                 <SubTaskItem key={subTask.id}>
                   <SubTaskName>• {subTask.name}</SubTaskName>
                   <SubTaskContent>{subTask.content}</SubTaskContent>
