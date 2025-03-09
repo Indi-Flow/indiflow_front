@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 const Container = styled.div`
   width: 1033px;
   margin-top: 44px;
+  height: auto;
+  background-color: #e6edf1;
   align-items: center;
   column-gap: 105px;
   row-gap: 57px;
