@@ -3,7 +3,6 @@ import Calendar from "assets/icons/icon_calendar.svg";
 import Content from "assets/icons/icon_content.svg";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { use } from "react";
 
 const Container = styled.div`
   width: 1033px;

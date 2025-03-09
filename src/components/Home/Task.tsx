@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import Memo from "./Memo";
 import Close from "assets/icons/icon_close.svg";
+import axios from "axios";
 
 const Container = styled.div`
   display: flex;
@@ -206,7 +207,7 @@ interface TaskProps {
   username: string | undefined;
 }
 
-interface Task {
+interface TaskData {
   id: number;
   title: string;
   content: string;
@@ -215,7 +216,51 @@ interface Task {
 
 export default function Task({ id, setInSubTask, username }: TaskProps) {
   const [isTask, setIsTask] = useState<boolean>(false);
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [tasks, setTasks] = useState<TaskData[]>([]);
+  const [name, setName] = useState<string>("");
+  const [content, setContent] = useState<string>("");
+  const [date, setDate] = useState<string>("");
+
+  useEffect(() => {
+    handleGetTasks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleGetTasks = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/project/${username}/${id}/task_list`
+      );
+      setTasks(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handlePostTask = async (date: string) => {
+    try {
+      const formDate = new Date(date).toISOString();
+      const response = await axios.post(
+        `http://localhost:8080/task/${username}/${id}/task`,
+        {
+          name: name,
+          content: content,
+          date: formDate,
+        }
+      );
+      const data = {
+        id: response.data,
+        title: name,
+        content: content,
+        date: formDate,
+      };
+      setTasks((props) => [...props, data]);
+      setIsTask(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const formatDate = (date: string) => {
     const now = new Date();
@@ -273,12 +318,20 @@ export default function Task({ id, setInSubTask, username }: TaskProps) {
               onClick={() => setIsTask(false)}
             />
             <Label>Task 이름</Label>
-            <Input type="text" placeholder="TASK 이름을 입력해주세요" />
+            <Input
+              type="text"
+              placeholder="TASK 이름을 입력해주세요"
+              onChange={(e) => setName(e.target.value)}
+            />
             <Label>마감일 설정</Label>
-            <Input type="date" />
+            <Input type="date" onChange={(e) => setDate(e.target.value)} />
             <Label>내용</Label>
-            <Input type="text" placeholder="내용을 입력해주세요." />
-            <AddButton onClick={() => setIsTask(false)}>등록하기</AddButton>
+            <Input
+              type="text"
+              placeholder="내용을 입력해주세요."
+              onChange={(e) => setContent(e.target.value)}
+            />
+            <AddButton onClick={() => handlePostTask(date)}>등록하기</AddButton>
           </BackGround>
         </Modal>
       )}
