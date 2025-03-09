@@ -34,12 +34,14 @@ interface NavigationProps {
   page: number;
   setPage: (page: number) => void;
   setTaskId: (taskId: number) => void;
+  username: string;
 }
 
 export default function Navigation({
   page,
   setPage,
   setTaskId,
+  username,
 }: NavigationProps) {
   const navigate = useNavigate();
 
@@ -50,7 +52,7 @@ export default function Navigation({
         alt="Logo"
         width={70}
         height={70}
-        onClick={() => navigate("/projects")}
+        onClick={() => navigate(`/projects/${username}`)}
       />
       <Wrap>
         <img

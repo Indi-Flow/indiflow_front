@@ -1,5 +1,7 @@
 import styled from "styled-components";
 import Arrow from "assets/icons/icon_arrow.svg";
+import { memo, useEffect, useState } from "react";
+import axios from "axios";
 
 const Container = styled.div`
   display: flex;
@@ -75,27 +77,56 @@ const Input = styled.input`
 
 interface MemoProps {
   id: string | undefined;
+  username: string | undefined;
 }
 
-export default function Memo({ id }: MemoProps) {
-  const memos = [
-    {
-      id: 1,
-      content: "한줄 메모 입니다.",
-      created_at: "2025-03-02T12:39:49",
-    },
+interface Memo {
+  id: number;
+  content: string;
+  created_at: string;
+}
 
-    {
-      id: 2,
-      content: "한줄 메모 입니다.한줄 메모 입니다.",
-      created_at: "2025-03-02T12:39:49",
-    },
-    {
-      id: 3,
-      content: "한줄 메모 입니다.",
-      created_at: "2025-03-02T12:39:49",
-    },
-  ];
+export default function Memo({ id, username }: MemoProps) {
+  const [memos, setMemos] = useState<Memo[]>([]);
+  const [content, setContent] = useState<string>("");
+
+  useEffect(() => {
+    handleGetMemo();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleGetMemo = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/project/${username}/${id}/memo`
+      );
+      setMemos(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handlePostMemo = async () => {
+    try {
+      const created_at = new Date().toISOString();
+      const response = await axios.post(
+        `http://localhost:8080/project/${username}/${id}/memo_add`,
+        {
+          content: content,
+          created_at: created_at,
+        }
+      );
+      const data = {
+        id: response.data,
+        content: content,
+        created_at: created_at,
+      };
+      setMemos((props) => [...props, data]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -119,8 +150,18 @@ export default function Memo({ id }: MemoProps) {
         </MemoWrap>
       ))}
       <InputDiv>
-        <Input type="text" placeholder="메모를 입력해주세요." />
-        <img src={Arrow} alt="arrow" width={24} height={24} />
+        <Input
+          type="text"
+          placeholder="메모를 입력해주세요."
+          onChange={(e) => setContent(e.target.value)}
+        />
+        <img
+          src={Arrow}
+          alt="arrow"
+          width={24}
+          height={24}
+          onClick={() => handlePostMemo()}
+        />
       </InputDiv>
     </Container>
   );

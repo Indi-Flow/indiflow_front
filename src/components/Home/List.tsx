@@ -73,6 +73,7 @@ const SubTaskDate = styled.p`
 
 interface ListProps {
   id: string | undefined;
+  username: string | undefined;
 }
 
 export default function List({ id }: ListProps) {

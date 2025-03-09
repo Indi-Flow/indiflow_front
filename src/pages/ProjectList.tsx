@@ -23,12 +23,13 @@ interface ProjectViewProps {
 
 export default function ProjectList() {
   const [projects, setProjects] = useState<ProjectViewProps[]>([]);
+  const [isDelete, setIsDelete] = useState<boolean>(false);
   const { username } = useParams<{ username: string }>();
 
   useEffect(() => {
     handleGetProjects();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [username, setProjects]);
+  }, [username, setProjects, isDelete]);
 
   const handleGetProjects = async () => {
     try {
@@ -45,7 +46,11 @@ export default function ProjectList() {
   return (
     <Container>
       <ProjectHeader setProjects={setProjects} username={username} />
-      <ProjectView datas={projects} />
+      <ProjectView
+        datas={projects}
+        username={username}
+        setIsDelete={setIsDelete}
+      />
     </Container>
   );
 }

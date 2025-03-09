@@ -178,6 +178,7 @@ const AddButton = styled.button`
 interface SubSubTaskProps {
   id: string | undefined;
   taskId: number;
+  username: string | undefined;
 }
 
 interface SubSubTaskData {
@@ -187,7 +188,7 @@ interface SubSubTaskData {
   date: string;
 }
 
-export default function SubSubTask({ id, taskId }: SubSubTaskProps) {
+export default function SubSubTask({ id, taskId, username }: SubSubTaskProps) {
   const [isSubTaskModal, setIsSubTaskModal] = useState<boolean>(false);
   const datas: SubSubTaskData[] = [
     {
@@ -249,7 +250,7 @@ export default function SubSubTask({ id, taskId }: SubSubTaskProps) {
             </SubTaskBox>
           ))}
         </SubTaskWrap>
-        <Memo id={id} />
+        <Memo id={id} username={username} />
       </SubTaskMemoWrap>
       {isSubTaskModal && (
         <Modal>
