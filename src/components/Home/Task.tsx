@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import styled from "styled-components";
+import styled, { keyframes, css } from "styled-components";
 import Memo from "./Memo";
 import Close from "assets/icons/icon_close.svg";
 import axios from "axios";
@@ -157,7 +157,29 @@ const OnButton = styled.button`
   cursor: pointer;
 `;
 
-const Modal = styled.div`
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
+
+const fadeOut = keyframes`
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+`;
+
+const Modal = styled.div<{ state: string }>`
   width: 100vw;
   height: 100vh;
   background: rgba(0, 0, 0, 0.5);
@@ -168,6 +190,16 @@ const Modal = styled.div`
   top: 0;
   left: 0;
   z-index: 100;
+  ${({ state }) =>
+    state === "entering" &&
+    css`
+      animation: ${fadeIn} 300ms forwards;
+    `}
+  ${({ state }) =>
+    state === "exiting" &&
+    css`
+      animation: ${fadeOut} 300ms forwards;
+    `}
 `;
 
 const BackGround = styled.div`
@@ -234,6 +266,7 @@ interface TaskData {
 
 export default function Task({ id, setInSubTask, username }: TaskProps) {
   const [isTask, setIsTask] = useState<boolean>(false);
+  const [animationState, setAnimationState] = useState<string>("entered");
   const [isDelete, setIsDelete] = useState<boolean>(false);
   const [tasks, setTasks] = useState<TaskData[]>([]);
   const [name, setName] = useState<string>("");
@@ -294,6 +327,18 @@ export default function Task({ id, setInSubTask, username }: TaskProps) {
     }
   };
 
+  const handleOpenModal = () => {
+    setAnimationState("entering");
+    setIsTask(true);
+  };
+
+  const handleCloseModal = () => {
+    setAnimationState("exiting");
+    setTimeout(() => {
+      setIsTask(false);
+    }, 300);
+  };
+
   const formatDate = (date: string) => {
     const now = new Date();
     const targetDate = new Date(date);
@@ -312,7 +357,7 @@ export default function Task({ id, setInSubTask, username }: TaskProps) {
   return (
     <Container>
       <Wrap>
-        <Button onClick={() => setIsTask(true)}>
+        <Button onClick={handleOpenModal}>
           <Span>+</Span> 새로운 Task 생성
         </Button>
       </Wrap>
@@ -339,7 +384,7 @@ export default function Task({ id, setInSubTask, username }: TaskProps) {
         <Memo id={id} username={username} />
       </TaskMemoWrap>
       {isTask && (
-        <Modal>
+        <Modal state={animationState}>
           <BackGround>
             <img
               src={Close}
@@ -350,7 +395,7 @@ export default function Task({ id, setInSubTask, username }: TaskProps) {
                 top: "50px",
                 cursor: "pointer",
               }}
-              onClick={() => setIsTask(false)}
+              onClick={handleCloseModal}
             />
             <Label>Task 이름</Label>
             <Input

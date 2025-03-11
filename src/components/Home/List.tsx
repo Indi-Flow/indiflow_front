@@ -17,6 +17,8 @@ const Wrap = styled.div`
   display: flex;
   flex-direction: column;
   border-radius: 5px;
+  max-height: 600px;
+  overflow-y: auto;
 `;
 
 const TaskWrap = styled.div`

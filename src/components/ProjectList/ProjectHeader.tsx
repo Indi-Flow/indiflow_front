@@ -1,5 +1,5 @@
 import { useState } from "react";
-import styled from "styled-components";
+import styled, { keyframes, css } from "styled-components";
 import Close from "assets/icons/icon_close.svg";
 import axios from "axios";
 
@@ -43,7 +43,29 @@ const Plus = styled.span`
   font-size: 18px;
 `;
 
-const Modal = styled.div`
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
+
+const fadeOut = keyframes`
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+`;
+
+const Modal = styled.div<{ state: string }>`
   width: 100vw;
   height: 100vh;
   background: rgba(0, 0, 0, 0.5);
@@ -54,6 +76,16 @@ const Modal = styled.div`
   top: 0;
   left: 0;
   z-index: 100;
+  ${({ state }) =>
+    state === "entering" &&
+    css`
+      animation: ${fadeIn} 300ms forwards;
+    `}
+  ${({ state }) =>
+    state === "exiting" &&
+    css`
+      animation: ${fadeOut} 300ms forwards;
+    `}
 `;
 
 const BackGround = styled.div`
@@ -122,6 +154,7 @@ export default function ProjectHeader({
   username,
 }: ProjectHeaderComponentProps) {
   const [projectModal, setProjectModal] = useState<boolean>(false);
+  const [animationState, setAnimationState] = useState<string>("entered");
   const [name, setName] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [date, setDate] = useState<string>("");
@@ -142,14 +175,26 @@ export default function ProjectHeader({
     }
   };
 
+  const handleOpenModal = () => {
+    setAnimationState("entering");
+    setProjectModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setAnimationState("exiting");
+    setTimeout(() => {
+      setProjectModal(false);
+    }, 300);
+  };
+
   return (
     <Container>
       <MainTitle>프로젝트 목록</MainTitle>
-      <Button onClick={() => setProjectModal(true)}>
+      <Button onClick={handleOpenModal}>
         <Plus>+</Plus> 새로운 프로젝트 생성
       </Button>
       {projectModal && (
-        <Modal>
+        <Modal state={animationState}>
           <BackGround>
             <img
               src={Close}
@@ -160,7 +205,7 @@ export default function ProjectHeader({
                 top: "50px",
                 cursor: "pointer",
               }}
-              onClick={() => setProjectModal(false)}
+              onClick={handleCloseModal}
             />
             <Label>프로젝트 제목</Label>
             <Input

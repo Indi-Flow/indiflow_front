@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { keyframes, css } from "styled-components";
 import Memo from "./Memo";
 import { useEffect, useState } from "react";
 import Close from "assets/icons/icon_close.svg";
@@ -114,7 +114,29 @@ const Content = styled.p`
   text-overflow: ellipsis;
 `;
 
-const Modal = styled.div`
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
+
+const fadeOut = keyframes`
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+`;
+
+const Modal = styled.div<{ state: string }>`
   width: 100vw;
   height: 100vh;
   background: rgba(0, 0, 0, 0.5);
@@ -125,8 +147,17 @@ const Modal = styled.div`
   top: 0;
   left: 0;
   z-index: 100;
+  ${({ state }) =>
+    state === "entering" &&
+    css`
+      animation: ${fadeIn} 300ms forwards;
+    `}
+  ${({ state }) =>
+    state === "exiting" &&
+    css`
+      animation: ${fadeOut} 300ms forwards;
+    `}
 `;
-
 const ButtonBox = styled.div`
   display: flex;
   justify-content: center;
@@ -215,6 +246,7 @@ interface SubTaskData {
 
 export default function SubSubTask({ id, taskId, username }: SubTaskProps) {
   const [isSubTaskModal, setIsSubTaskModal] = useState<boolean>(false);
+  const [animationState, setAnimationState] = useState<string>("entered");
   const [subTasks, setSubTasks] = useState<SubTaskData[]>([]);
   const [isDelete, setIsDelete] = useState<boolean>(false);
   const [name, setName] = useState<string>("");
@@ -274,6 +306,18 @@ export default function SubSubTask({ id, taskId, username }: SubTaskProps) {
     }
   };
 
+  const handleOpenModal = () => {
+    setAnimationState("entering");
+    setIsSubTaskModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setAnimationState("exiting");
+    setTimeout(() => {
+      setIsSubTaskModal(false);
+    }, 300);
+  };
+
   const formatDate = (date: string) => {
     const now = new Date();
     const targetDate = new Date(date);
@@ -292,7 +336,7 @@ export default function SubSubTask({ id, taskId, username }: SubTaskProps) {
   return (
     <Container>
       <Wrap>
-        <Button onClick={() => setIsSubTaskModal(true)}>
+        <Button onClick={handleOpenModal}>
           <Span>+</Span> 새로운 SubTask 생성
         </Button>
       </Wrap>
@@ -316,7 +360,7 @@ export default function SubSubTask({ id, taskId, username }: SubTaskProps) {
         <Memo id={id} username={username} />
       </SubTaskMemoWrap>
       {isSubTaskModal && (
-        <Modal>
+        <Modal state={animationState}>
           <BackGround>
             <img
               src={Close}
@@ -327,7 +371,7 @@ export default function SubSubTask({ id, taskId, username }: SubTaskProps) {
                 top: "50px",
                 cursor: "pointer",
               }}
-              onClick={() => setIsSubTaskModal(false)}
+              onClick={handleCloseModal}
             />
             <Label>SubTask 이름</Label>
             <Input
