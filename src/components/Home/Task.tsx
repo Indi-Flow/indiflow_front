@@ -328,6 +328,10 @@ export default function Task({ id, setInSubTask, username }: TaskProps) {
   };
 
   const handleOpenModal = () => {
+    if (tasks.length >= 4) {
+      alert("Task는 최대 4개까지 등록할 수 있습니다.");
+      return;
+    }
     setAnimationState("entering");
     setIsTask(true);
   };

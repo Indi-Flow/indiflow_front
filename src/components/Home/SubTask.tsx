@@ -307,6 +307,10 @@ export default function SubSubTask({ id, taskId, username }: SubTaskProps) {
   };
 
   const handleOpenModal = () => {
+    if (subTasks.length >= 4) {
+      alert("Task는 최대 4개까지 등록할 수 있습니다.");
+      return;
+    }
     setAnimationState("entering");
     setIsSubTaskModal(true);
   };
