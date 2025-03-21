@@ -9,6 +9,7 @@ import Pause from "assets/icons/icon_pause.svg";
 import Reset from "assets/icons/icon_reset.svg";
 import styled from "styled-components";
 import Statistics from "components/Home/Statistics";
+import axios from "axios";
 
 const Container = styled.div`
   display: flex;
@@ -78,11 +79,24 @@ export default function Home() {
 
   useEffect(() => {
     if (time === 0) {
-      alert("타이머가 종료되었습니다.");
+      alert("포모도로 추가!");
       setTime(1800);
       setIsActive(false);
+      postPomodoro();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [time]);
+
+  const postPomodoro = async () => {
+    try {
+      const response = await axios.post(
+        `http://127.0.0.1:8080/pomodoro/add/${username}`
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const toggleTimer = () => {
     setIsActive(!isActive);
@@ -137,7 +151,7 @@ export default function Home() {
       ) : page === 2 ? (
         <List id={id} username={username} />
       ) : (
-        <Statistics />
+        <Statistics username={username} />
       )}
     </Container>
   );
