@@ -104,7 +104,7 @@ export default function List({ id, username }: ListProps) {
   const handleGetAll = async () => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8080/project/${username}/${id}/tasks_with_subtasks`
+        `${process.env.API_URL}/project/${username}/${id}/tasks_with_subtasks`
       );
       setAllTasks(response.data);
       console.log(response.data);

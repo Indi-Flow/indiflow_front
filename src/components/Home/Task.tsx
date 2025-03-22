@@ -281,7 +281,7 @@ export default function Task({ id, setInSubTask, username }: TaskProps) {
   const handleGetTasks = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/project/${username}/${id}/task_list`
+        `${process.env.REACT_APP_API_URL}/project/${username}/${id}/task_list`
       );
       setTasks(response.data);
       console.log(response.data);
@@ -294,7 +294,7 @@ export default function Task({ id, setInSubTask, username }: TaskProps) {
     try {
       const formDate = new Date(date).toISOString();
       const response = await axios.post(
-        `http://localhost:8080/task/${username}/${id}/task`,
+        `${process.env.REACT_APP_API_URL}/task/${username}/${id}/task`,
         {
           name: name,
           content: content,
@@ -318,7 +318,7 @@ export default function Task({ id, setInSubTask, username }: TaskProps) {
     try {
       setIsDelete(true);
       const response = await axios.delete(
-        `http://localhost:8080/task/${username}/${id}/${taskId}/finish_task`
+        `${process.env.REACT_APP_API_URL}/task/${username}/${id}/${taskId}/finish_task`
       );
       alert(response.data);
       setIsDelete(false);

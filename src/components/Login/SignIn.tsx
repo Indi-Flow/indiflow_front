@@ -84,10 +84,13 @@ export default function SignIn({ setIsSignIn }: SignInProps) {
 
   const handleSignIn = async () => {
     try {
-      const response = await axios.post("http://127.0.0.1:8080/user/sign_in", {
-        username: id,
-        password: password,
-      });
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/user/sign_in`,
+        {
+          username: id,
+          password: password,
+        }
+      );
       navigate(`/projects/${response.data}`);
       console.log(response);
     } catch (error) {

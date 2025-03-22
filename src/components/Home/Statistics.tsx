@@ -66,7 +66,7 @@ export default function Statistics({ username }: PomodoroProps) {
   const getTodayPomodoro = async () => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8080/pomodoro/stats/${username}`
+        `${process.env.API_URL}/pomodoro/stats/${username}`
       );
       setPomodoro(response.data);
     } catch (error) {

@@ -90,7 +90,7 @@ export default function Home() {
   const postPomodoro = async () => {
     try {
       const response = await axios.post(
-        `http://127.0.0.1:8080/pomodoro/add/${username}`
+        `${process.env.REACT_APP_API_URL}/pomodoro/add/${username}`
       );
       console.log(response.data);
     } catch (error) {

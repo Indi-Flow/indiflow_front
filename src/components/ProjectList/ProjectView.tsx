@@ -111,7 +111,7 @@ export default function ProjectView({
     try {
       setIsDelete(true);
       const response = await axios.delete(
-        `http://localhost:8080/project/${username}/${id}/finish_project`
+        `${process.env.REACT_APP_API_URL}/project/${username}/${id}/finish_project`
       );
       alert(response.data);
       setIsDelete(false);

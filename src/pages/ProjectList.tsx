@@ -34,7 +34,7 @@ export default function ProjectList() {
   const handleGetProjects = async () => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8080/projects/${username}`
+        `${process.env.REACT_APP_API_URL}/${username}`
       );
       console.log(response.data);
       setProjects(response.data);

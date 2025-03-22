@@ -164,8 +164,12 @@ export default function ProjectHeader({
       const formattedDate = new Date(date).toISOString();
       console.log(name, content, formattedDate);
       const response = await axios.post(
-        `http://127.0.0.1:8080/project/${username}`,
-        { name: name, content: content, date: formattedDate }
+        `${process.env.REACT_APP_API_URL}/${username}`,
+        {
+          name: name,
+          content: content,
+          date: formattedDate,
+        }
       );
       console.log(response.data);
       setProjects((props) => [...props, response.data]);

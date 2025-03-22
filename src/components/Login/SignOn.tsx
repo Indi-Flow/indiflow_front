@@ -70,11 +70,15 @@ export default function SignOn({ setIsSignIn }: SignOnProps) {
 
   const handleSignOn = async () => {
     try {
-      const response = await axios.post("http://127.0.0.1:8080/user/sign_up", {
-        username: id,
-        password: password,
-        email: email,
-      });
+      console.log("API URL:", process.env.REACT_APP_API_URL);
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/user/sign_up`,
+        {
+          username: id,
+          password: password,
+          email: email,
+        }
+      );
       setIsSignIn(true);
       console.log(response);
     } catch (error) {

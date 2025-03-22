@@ -261,7 +261,7 @@ export default function SubSubTask({ id, taskId, username }: SubTaskProps) {
   const handleGetSubTasks = async () => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8080/task/${username}/${id}/${taskId}/subTask_list`
+        `${process.env.REACT_APP_API_URL}/task/${username}/${id}/${taskId}/subTask_list`
       );
       setSubTasks(response.data);
     } catch (error) {
@@ -273,7 +273,7 @@ export default function SubSubTask({ id, taskId, username }: SubTaskProps) {
     try {
       const formDate = new Date(date).toISOString();
       const response = await axios.post(
-        `http://127.0.0.1:8080/subTask/${username}/${id}/${taskId}/subTask`,
+        `${process.env.REACT_APP_API_URL}/subTask/${username}/${id}/${taskId}/subTask`,
         {
           name: name,
           content: content,
@@ -297,7 +297,7 @@ export default function SubSubTask({ id, taskId, username }: SubTaskProps) {
     try {
       setIsDelete(true);
       const response = await axios.delete(
-        `http://localhost:8080/subTask/${username}/${id}/${taskId}/${subTaskId}/finish_subtask`
+        `${process.env.REACT_APP_API_URL}/subTask/${username}/${id}/${taskId}/${subTaskId}/finish_subtask`
       );
       alert(response.data);
       setIsDelete(false);
