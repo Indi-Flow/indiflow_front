@@ -10,13 +10,13 @@ const Container = styled.div`
   flex-direction: column;
   background-color: #e6edf1;
   padding-left: 53px;
-  padding-top: 10%;
 `;
 
 const Wrap = styled.div`
   display: flex;
   flex-direction: column;
   border-radius: 5px;
+  padding-top: 14%;
   max-height: 600px;
   overflow-y: auto;
 `;
@@ -104,7 +104,7 @@ export default function List({ id, username }: ListProps) {
   const handleGetAll = async () => {
     try {
       const response = await axios.get(
-        `${process.env.API_URL}/project/${username}/${id}/tasks_with_subtasks`
+        `${process.env.REACT_APP_API_URL}/project/${username}/${id}/tasks_with_subtasks`
       );
       setAllTasks(response.data);
       console.log(response.data);

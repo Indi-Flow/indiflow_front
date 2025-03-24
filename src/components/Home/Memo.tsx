@@ -98,7 +98,7 @@ export default function Memo({ id, username }: MemoProps) {
   const handleGetMemo = async () => {
     try {
       const response = await axios.get(
-        `${process.env.API_URL}/project/${username}/${id}/memo`
+        `${process.env.REACT_APP_API_URL}/project/${username}/${id}/memo`
       );
       setMemos(response.data);
       console.log(response.data);

@@ -14,6 +14,7 @@ import axios from "axios";
 const Container = styled.div`
   display: flex;
   height: 100vh;
+  width: 100vw;
 `;
 
 const TimerBox = styled.div`
@@ -56,6 +57,22 @@ const TimerText = styled.p`
   line-height: normal;
 `;
 
+const ContentArea = styled.div`
+  width: 88%;
+  animation: slideIn 0.3s ease-in-out;
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+`;
+
 export default function Home() {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
@@ -84,7 +101,6 @@ export default function Home() {
       setIsActive(false);
       postPomodoro();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [time]);
 
   const postPomodoro = async () => {
@@ -111,6 +127,20 @@ export default function Home() {
     const minutes = Math.floor(time / 60);
     const seconds = time % 60;
     return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
+  };
+
+  const getPageContent = () => {
+    if (page === 1) {
+      return taskId === -1 ? (
+        <Task key="task" id={id} setInSubTask={setTaskId} username={username} />
+      ) : (
+        <SubTask key="subtask" id={id} taskId={taskId} username={username} />
+      );
+    } else if (page === 2) {
+      return <List key="list" id={id} username={username} />;
+    } else {
+      return <Statistics key="stats" username={username} />;
+    }
   };
 
   return (
@@ -142,17 +172,7 @@ export default function Home() {
           </Timer>
         </TimerBox>
       </div>
-      {page === 1 ? (
-        taskId === -1 ? (
-          <Task id={id} setInSubTask={setTaskId} username={username} />
-        ) : (
-          <SubTask id={id} taskId={taskId} username={username} />
-        )
-      ) : page === 2 ? (
-        <List id={id} username={username} />
-      ) : (
-        <Statistics username={username} />
-      )}
+      <ContentArea key={`${page}-${taskId}`}>{getPageContent()}</ContentArea>
     </Container>
   );
 }

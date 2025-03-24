@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 const Container = styled.div`
   display: flex;
-  width: 100%;
+  width: 104%;
   height: 100%;
   flex-direction: column;
   background-color: #e6edf1;
@@ -66,7 +66,7 @@ export default function Statistics({ username }: PomodoroProps) {
   const getTodayPomodoro = async () => {
     try {
       const response = await axios.get(
-        `${process.env.API_URL}/pomodoro/stats/${username}`
+        `${process.env.REACT_APP_API_URL}/pomodoro/stats/${username}`
       );
       setPomodoro(response.data);
     } catch (error) {
