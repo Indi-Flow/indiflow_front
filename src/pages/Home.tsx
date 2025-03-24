@@ -101,6 +101,7 @@ export default function Home() {
       setIsActive(false);
       postPomodoro();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [time]);
 
   const postPomodoro = async () => {
