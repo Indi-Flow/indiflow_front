@@ -111,7 +111,7 @@ export default function Memo({ id, username }: MemoProps) {
     try {
       const created_at = new Date().toISOString();
       const response = await axios.post(
-        `http://localhost:8080/project/${username}/${id}/memo_add`,
+        `${process.env.REACT_APP_API_URL}/project/${username}/${id}/memo_add`,
         {
           content: content,
           created_at: created_at,
@@ -139,9 +139,9 @@ export default function Memo({ id, username }: MemoProps) {
 
   return (
     <Container>
-      {memos.map((memo, index) => (
-        <MemoWrap>
-          <MemoItem key={memo.id}>
+      {[...memos].reverse().map((memo, index) => (
+        <MemoWrap key={memo.id}>
+          <MemoItem>
             <MemoText>{memo.content}</MemoText>
           </MemoItem>
           <MemoDate isFirst={index === 0}>

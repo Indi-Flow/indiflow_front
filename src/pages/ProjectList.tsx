@@ -10,7 +10,8 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   background-color: #e6edf1;
-  height: 100vh;
+  height: auto;
+  min-height: 100vh;
   width: 100vw;
 `;
 
@@ -33,8 +34,9 @@ export default function ProjectList() {
 
   const handleGetProjects = async () => {
     try {
+      console.log(process.env.REACT_APP_API_URL);
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/${username}`
+        `${process.env.REACT_APP_API_URL}/projects/${username}`
       );
       console.log(response.data);
       setProjects(response.data);
